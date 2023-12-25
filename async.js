@@ -1,7 +1,13 @@
-console.log("start exe...")
+let a = 20;
+let b = 0;
 
-setTimeout(() => {
-    console.log('logix exe...')
-}, 2000);
-
-console.log('complete exe....')
+let waitingData = new Promise((resolve,reject)=>{
+    setTimeout(() => {
+        resolve(30)
+    }, 2000);
+})
+waitingData.then((data)=>{
+    console.log(a+data)
+}).catch((error)=>{
+    console.log("Error")
+})
