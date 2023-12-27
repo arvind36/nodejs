@@ -1,22 +1,32 @@
 const express = require("express");
-require("./config");
-const Product = require("./product");
-
+const multer = require("multer");
 const app = express();
-app.use(express.json());
 
-app.get("/search/:key", async (req, res) => {
-  console.log(req.params.key);
-  let data = await Product.find({
-    $or: [
-      { name: { $regex: req.params.key } },
-      { brand: { $regex: req.params.key } },
-      { category: { $regex: req.params.key } },
-    ],
-  });
-  res.send(data);
+// Multer configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Specify the destination folder for uploads
+  },
+  filename: (req, file, cb) => {
+    let datetimestamp = Date.now() + "." + file.originalname.split(".")[1];
+    cb(null, datetimestamp); // Use the original file name with a timestamp for uniqueness
+  },
 });
 
-app.listen(4500, () => {
-  console.log("server running on 4500");
+const upload = multer({ storage: storage }).single("user_file");
+
+// Route for handling file uploads
+app.post("/upload", (req, res) => {
+  // Use the 'upload' middleware to handle the file upload
+  upload(req, res, (err) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.send("File upload successful");
+  });
+});
+
+// Server listening on port 5000
+app.listen(5000, () => {
+  console.log("Server running on port 5000");
 });
