@@ -1,5 +1,5 @@
 const express = require("express");
-require("./config"); // Assuming this is the correct path to your configuration file
+require("./config");
 const Product = require("./product");
 
 const app = express();
@@ -9,6 +9,21 @@ app.post("/create", async (req, res) => {
   let result = await data.save();
   console.log(result);
   res.send(result);
+});
+
+app.get("/list", async (req, res) => {
+  let data = await Product.find();
+  res.send(data);
+});
+
+app.delete("/delete/:_id", async (req, res) => {
+  let data = await Product.deleteOne(req.params);
+  res.send(data);
+});
+
+app.put("/update/:_id", async (req, res) => {
+  let data = await Product.updateOne(req.params, { $set: req.body });
+  res.send(data);
 });
 
 app.listen(4500, () => {
